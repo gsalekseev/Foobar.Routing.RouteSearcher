@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Mixvel.Routing.RouteSearcher.Api.Common;
 using Mixvel.Routing.RouteSearcher.Api.Extensions.ServiceCollection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +22,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks();
 
 builder.Services.AddRouteProviders(builder.Configuration);
+builder.Services.AddHealthChecks().AddCheck<RouteServiceHealthCheck>("RouteServiceHealthCheck");
+;
+
 
 var app = builder.Build();
 
@@ -34,5 +40,14 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/ping", new HealthCheckOptions
+{
+    ResultStatusCodes =
+    {
+        [HealthStatus.Healthy] = StatusCodes.Status200OK,
+        [HealthStatus.Degraded] = StatusCodes.Status200OK,
+        [HealthStatus.Unhealthy] = StatusCodes.Status500InternalServerError
+    }
+});
 
 app.Run();
