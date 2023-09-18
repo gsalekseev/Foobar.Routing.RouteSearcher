@@ -1,6 +1,8 @@
-﻿using Mixvel.Routing.RouteSearcher.Api.Common;
-
-namespace Mixvel.Routing.RouteSearcher.Api.Extensions.ServiceCollection;
+﻿using System;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Mixvel.Routing.RouteSearcher.Api.Common;
+using Mixvel.Routing.RouteSearcher.Infrastructure;
 
 public static class ServiceCollectionExtension
 {
@@ -24,6 +26,9 @@ public static class ServiceCollectionExtension
                 client.BaseAddress = new Uri(provider.BaseUrl);
             });
         }
+
+
+        services.AddInfrastructure();
         return services;
     }
 }

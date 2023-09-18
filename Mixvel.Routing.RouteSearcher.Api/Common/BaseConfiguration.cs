@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Mixvel.Routing.RouteSearcher.Api.Common;
-
-    /// <summary>
+/// <summary>
     /// Описание базовой конфигурации сервиса
     /// </summary>
     public class BaseConfiguration

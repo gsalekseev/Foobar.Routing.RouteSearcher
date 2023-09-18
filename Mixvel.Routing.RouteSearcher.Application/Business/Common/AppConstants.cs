@@ -1,5 +1,5 @@
 ﻿
-namespace Mixvel.Routing.RouteSearcher.Api.Common
+namespace Mixvel.Routing.RouteSearcher.Application.Business.Common
 {
     public static class AppConstants
     {

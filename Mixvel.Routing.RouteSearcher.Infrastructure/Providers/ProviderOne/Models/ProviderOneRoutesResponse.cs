@@ -1,4 +1,4 @@
-﻿namespace Mixvel.Routing.RouteSearcher.Infrastructure.Http.Providers.ProviderOne.Models
+﻿namespace Mixvel.Routing.RouteSearcher.Infrastructure.Providers.ProviderOne.Models
 {
     public class ProviderOneRoutesResponse
     {

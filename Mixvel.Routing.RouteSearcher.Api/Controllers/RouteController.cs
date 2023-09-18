@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Mixvel.Routing.RouteSearcher.Api.Common;
-
-namespace Mixvel.Routing.RouteSearcher.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -13,7 +14,6 @@ public class RouteController : ControllerBase
     public RouteController(IOptions<ProvidersConfiguration> providersConfiguration)
     {
         var config = providersConfiguration.Value;
-        
     }
 
     [HttpGet("{id}")]

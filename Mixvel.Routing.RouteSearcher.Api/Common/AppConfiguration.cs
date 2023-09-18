@@ -1,4 +1,4 @@
-﻿namespace Mixvel.Routing.RouteSearcher.Api.Common;
+﻿using Mixvel.Routing.RouteSearcher.Api.Common;
 
 public class AppConfiguration : BaseConfiguration
 {

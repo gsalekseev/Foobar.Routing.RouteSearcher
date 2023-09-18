@@ -1,32 +1,25 @@
 using System;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Mixvel.Routing.RouteSearcher.Application.Business.Routes.Primitives;
-using Mixvel.Routing.RouteSearcher.Infrastructure.Providers.ProviderOne.Models;
+using Mixvel.Routing.RouteSearcher.Infrastructure.Providers.ProviderTwo.Models;
 using Mixvel.Routing.RouteSearcher.Infrastructure.Providers.Shared;
 
-namespace Mixvel.Routing.RouteSearcher.Infrastructure.Providers.ProviderOne
+namespace Mixvel.Routing.RouteSearcher.Infrastructure.Providers.ProviderTwo
 {
-    public class ProviderOneHttpClient: ProviderBaseClient,IProviderOneHttpClient{
-
-        private const string Name = "ProviderOne";
+    public class ProviderTwoHttpClient : ProviderBaseClient, IProviderTwoHttpClient
+    {
+        private const string Name = "ProviderTwo";
         private const string GetRoutesUrl = "/";
         private const string PingUrl = "/";
         private readonly ILogger Logger;
         
         private HttpClient httpClient;
         
-        public ProviderOneHttpClient(IHttpClientFactory clientFactory, ILogger logger)
-        {
-            Logger = logger;
-            this.httpClient = clientFactory.CreateClient(Name);
-        }
-        
-        public async Task<ProviderOneRoutesResponse> GetRoutes(ProviderOneRoutesRequest request, CancellationToken cancellationToken)
+        public async Task<ProviderTwoRoutesResponse> GetRoutes(ProviderTwoRoutesRequest request, CancellationToken cancellationToken)
         {
             try
             {
@@ -34,7 +27,7 @@ namespace Mixvel.Routing.RouteSearcher.Infrastructure.Providers.ProviderOne
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var result = await response.Content.ReadFromJsonAsync<ProviderOneRoutesResponse>(cancellationToken: cancellationToken);
+                    var result = await response.Content.ReadFromJsonAsync<ProviderTwoRoutesResponse>(cancellationToken: cancellationToken);
                     return result;
                 }
                 else
@@ -64,4 +57,3 @@ namespace Mixvel.Routing.RouteSearcher.Infrastructure.Providers.ProviderOne
         }
     }
 }
-

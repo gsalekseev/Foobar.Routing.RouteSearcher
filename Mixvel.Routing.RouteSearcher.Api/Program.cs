@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Mixvel.Routing.RouteSearcher.Api.Common;
-using Mixvel.Routing.RouteSearcher.Api.Extensions.ServiceCollection;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,7 @@ builder.Services.AddOptions();
 
 builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks();
+builder.Services.AddMemoryCache();
 
 builder.Services.AddRouteProviders(builder.Configuration);
 builder.Services.AddHealthChecks().AddCheck<RouteServiceHealthCheck>("RouteServiceHealthCheck");
