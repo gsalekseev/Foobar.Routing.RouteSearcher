@@ -32,7 +32,7 @@ namespace Mixvel.Routing.RouteSearcher.Infrastructure.Providers.ProviderTwo
         {
             var status = await _httpClient.IsHealthy(cancellationToken);
 
-            return status == ProviderHealhCheck.Healthy;
+            return status == ProviderHealthCheck.Healthy;
         }
     }
 }

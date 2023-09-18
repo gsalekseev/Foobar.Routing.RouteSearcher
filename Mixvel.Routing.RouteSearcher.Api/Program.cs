@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Hosting;
+using Mixvel.Routing.RouteSearcher.Api.Common;
+using Mixvel.Routing.RouteSearcher.Api.Extensions.Middleware;
+using Mixvel.Routing.RouteSearcher.Application.Extensions;
+using Mixvel.Routing.RouteSearcher.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,11 +23,18 @@ builder.Services.AddOptions();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks();
 builder.Services.AddMemoryCache();
+builder.Services.AddLogging();
 
-builder.Services.AddRouteProviders(builder.Configuration);
-builder.Services.AddHealthChecks().AddCheck<RouteServiceHealthCheck>("RouteServiceHealthCheck");
-;
+builder.Services.AddLogging(config =>
+{
+    config.AddDebug();
+    config.AddConsole();
+});
 
+builder.Services.AddApplication(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddHealthChecks()
+    .AddCheck<RouteServiceHealthCheck>("RouteServiceHealthCheck");
 
 var app = builder.Build();
 
@@ -52,5 +59,7 @@ app.MapHealthChecks("/ping", new HealthCheckOptions
         [HealthStatus.Unhealthy] = StatusCodes.Status500InternalServerError
     }
 });
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.Run();

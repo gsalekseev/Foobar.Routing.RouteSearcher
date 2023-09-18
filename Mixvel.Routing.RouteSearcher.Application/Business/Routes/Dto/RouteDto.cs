@@ -1,8 +1,7 @@
-﻿using System;
-
+﻿
 namespace Mixvel.Routing.RouteSearcher.Application.Business.Routes.Dto
 {
-    public class RouteDto
+    public record RouteDto
     {
         // Mandatory
         // Identifier of the whole route

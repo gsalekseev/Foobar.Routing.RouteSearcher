@@ -24,7 +24,6 @@ namespace Mixvel.Routing.RouteSearcher.Infrastructure.Providers.ProviderTwo.Mapp
                     exp => exp.MapFrom(src => src.Arrival != null ? src.Arrival.Point : string.Empty))
                 .ForMember(dest => dest.Origin,
                     exp => exp.MapFrom(src => src.Departure != null ? src.Departure.Point : string.Empty))
-                .ForMember(dest => dest.Price, exp => exp.MapFrom(src => src.Price))
                 .ForMember(dest => dest.TimeLimit,
                     exp => exp.MapFrom(src => DateTime.Now.AddDays(7))) //one week time limit
                 .ForMember(dest => dest.DestinationDateTime,

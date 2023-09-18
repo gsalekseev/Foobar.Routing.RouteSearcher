@@ -1,13 +1,13 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Mixvel.Routing.RouteSearcher.Application.Business.Routes.Interfaces;
+using Mixvel.Routing.RouteSearcher.Application.Business.Routes.Primitives;
+
+namespace Mixvel.Routing.RouteSearcher.Api.Common;
 
 public class RouteServiceHealthCheck : IHealthCheck
 {
     private readonly IRouteAggregator _aggregator;
-    
+
     public static HealthStatus? status;
     public static DateTime statusExpiresIn;
 
@@ -21,21 +21,27 @@ public class RouteServiceHealthCheck : IHealthCheck
     {
         if (status is null || DateTime.Now >= statusExpiresIn)
         {
-            status = await _aggregator.GetHealthStatus(cancellationToken);
+            var innerStatus = await _aggregator.GetHealthStatus(cancellationToken);
+            status = MapHealthCheckToHealthStatus(innerStatus);
             statusExpiresIn = DateTime.Now.AddMinutes(1); //healthcheck is actual during 1 minute
         }
 
-        if (status == HealthStatus.Healthy)
+        return status switch
         {
-            return HealthCheckResult.Healthy();
-        }
+            HealthStatus.Healthy => HealthCheckResult.Healthy(),
+            HealthStatus.Degraded => HealthCheckResult.Degraded(),
+            _ => new HealthCheckResult(context.Registration.FailureStatus)
+        };
+    }
 
-        if (status == HealthStatus.Degraded)
+    private HealthStatus? MapHealthCheckToHealthStatus(ProviderHealthCheck healthCheck)
+    {
+        return healthCheck switch
         {
-            return HealthCheckResult.Degraded();
-        }
-
-        return new HealthCheckResult(
-            context.Registration.FailureStatus);
+            ProviderHealthCheck.Degraded => HealthStatus.Degraded,
+            ProviderHealthCheck.Unhealthy => HealthStatus.Unhealthy,
+            ProviderHealthCheck.Healthy => HealthStatus.Healthy,
+            _ => null
+        };
     }
 }

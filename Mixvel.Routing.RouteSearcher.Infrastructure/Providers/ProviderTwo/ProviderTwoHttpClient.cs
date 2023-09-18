@@ -4,7 +4,10 @@ using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Mixvel.Routing.RouteSearcher.Application.Business.Routes.Primitives;
+using Mixvel.Routing.RouteSearcher.Application.Configuration;
+using Mixvel.Routing.RouteSearcher.Infrastructure.Providers.Helpers;
 using Mixvel.Routing.RouteSearcher.Infrastructure.Providers.ProviderTwo.Models;
 using Mixvel.Routing.RouteSearcher.Infrastructure.Providers.Shared;
 
@@ -13,17 +16,22 @@ namespace Mixvel.Routing.RouteSearcher.Infrastructure.Providers.ProviderTwo
     public class ProviderTwoHttpClient : ProviderBaseClient, IProviderTwoHttpClient
     {
         private const string Name = "ProviderTwo";
-        private const string GetRoutesUrl = "/";
-        private const string PingUrl = "/";
-        private readonly ILogger Logger;
-        
-        private HttpClient httpClient;
-        
+        private readonly ILogger<ProviderTwoHttpClient> _logger;
+        private readonly HttpClient _httpClient;
+        private ProviderUrls _urls;
+
+        public ProviderTwoHttpClient(ILogger<ProviderTwoHttpClient> logger, HttpClient httpClient, IOptions<ProvidersConfiguration> configuration)
+        {
+            _logger = logger;
+            this._httpClient = httpClient;
+            this._urls = ProvidersOptionsHelper.GetUrlsFromConfiguration(Name, configuration);
+        }
+
         public async Task<ProviderTwoRoutesResponse> GetRoutes(ProviderTwoRoutesRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                HttpResponseMessage response = await httpClient.PostAsJsonAsync(GetRoutesUrl, request, cancellationToken);
+                HttpResponseMessage response = await _httpClient.PostAsJsonAsync(_urls.SearchRoutesUrl, request, cancellationToken);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -37,21 +45,21 @@ namespace Mixvel.Routing.RouteSearcher.Infrastructure.Providers.ProviderTwo
             }
             catch (Exception e)
             {
-                this.Logger.LogError(e.Message);
+                this._logger.LogError(e.Message);
                 throw;
             }
         }
 
-        public async Task<ProviderHealhCheck> IsHealthy(CancellationToken cancellationToken)
+        public async Task<ProviderHealthCheck> IsHealthy(CancellationToken cancellationToken)
         {
             try
             {
-                HttpResponseMessage response = await httpClient.GetAsync(PingUrl, cancellationToken);
+                HttpResponseMessage response = await _httpClient.GetAsync(_urls.HealthCheckUrl, cancellationToken);
                 return this.HealthCheck(response);
             }
             catch (Exception e)
             {
-                this.Logger.LogError(e.Message);
+                this._logger.LogError(e.Message);
                 throw;
             }
         }

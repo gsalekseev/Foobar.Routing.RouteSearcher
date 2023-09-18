@@ -4,7 +4,8 @@ using Mixvel.Routing.RouteSearcher.Application.Business.Routes.Dto;
 
 namespace Mixvel.Routing.RouteSearcher.Application.Business.Routes.Queries.SearchRoutes
 {
-    public class SearchRoutesQuery: IRequest<RouteDto[]>
+    
+    public class SearchRoutesQuery: IRequest<SearchRoutesResultDto>
     {
         // Mandatory
         // Start point of route, e.g. Moscow 

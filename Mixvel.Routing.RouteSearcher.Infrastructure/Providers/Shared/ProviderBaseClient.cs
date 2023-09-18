@@ -7,18 +7,18 @@ namespace Mixvel.Routing.RouteSearcher.Infrastructure.Providers.Shared
 {
     public abstract class ProviderBaseClient
     { 
-        public ProviderHealhCheck HealthCheck(HttpResponseMessage response)
+        public ProviderHealthCheck HealthCheck(HttpResponseMessage response)
         {
             if (response.IsSuccessStatusCode)
             {
-                return ProviderHealhCheck.Healthy;
+                return ProviderHealthCheck.Healthy;
             }
             else if (response.StatusCode == HttpStatusCode.InternalServerError)
             {
-                return ProviderHealhCheck.Unhealthy;
+                return ProviderHealthCheck.Unhealthy;
             }
                 
-            return ProviderHealhCheck.Unknown;
+            return ProviderHealthCheck.Unknown;
         }
     }
 }

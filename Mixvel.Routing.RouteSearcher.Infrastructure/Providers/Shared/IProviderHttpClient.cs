@@ -13,6 +13,6 @@ namespace Mixvel.Routing.RouteSearcher.Infrastructure.Providers.Shared
         Task<TResponse> GetRoutes(TRequest request,
             CancellationToken cancellationToken);
 
-        Task<ProviderHealhCheck> IsHealthy(CancellationToken cancellationToken);
+        Task<ProviderHealthCheck> IsHealthy(CancellationToken cancellationToken);
     }
 }

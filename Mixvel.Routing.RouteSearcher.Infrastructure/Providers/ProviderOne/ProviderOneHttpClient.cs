@@ -1,11 +1,9 @@
-using System;
-using System.Net;
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Mixvel.Routing.RouteSearcher.Application.Business.Routes.Primitives;
+using Mixvel.Routing.RouteSearcher.Application.Configuration;
+using Mixvel.Routing.RouteSearcher.Infrastructure.Providers.Helpers;
 using Mixvel.Routing.RouteSearcher.Infrastructure.Providers.ProviderOne.Models;
 using Mixvel.Routing.RouteSearcher.Infrastructure.Providers.Shared;
 
@@ -14,23 +12,24 @@ namespace Mixvel.Routing.RouteSearcher.Infrastructure.Providers.ProviderOne
     public class ProviderOneHttpClient: ProviderBaseClient,IProviderOneHttpClient{
 
         private const string Name = "ProviderOne";
-        private const string GetRoutesUrl = "/";
-        private const string PingUrl = "/";
-        private readonly ILogger Logger;
+        private readonly ILogger<ProviderOneHttpClient> _logger;
+        private readonly ProviderUrls _urls;
         
         private HttpClient httpClient;
         
-        public ProviderOneHttpClient(IHttpClientFactory clientFactory, ILogger logger)
+        public ProviderOneHttpClient(IHttpClientFactory clientFactory, ILogger<ProviderOneHttpClient> logger, IOptions<ProvidersConfiguration> providersConfiguration)
         {
-            Logger = logger;
+            _logger = logger;
             this.httpClient = clientFactory.CreateClient(Name);
+
+            this._urls = ProvidersOptionsHelper.GetUrlsFromConfiguration(Name, providersConfiguration);
         }
         
         public async Task<ProviderOneRoutesResponse> GetRoutes(ProviderOneRoutesRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                HttpResponseMessage response = await httpClient.PostAsJsonAsync(GetRoutesUrl, request, cancellationToken);
+                HttpResponseMessage response = await httpClient.PostAsJsonAsync(_urls.SearchRoutesUrl, request, cancellationToken);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -44,21 +43,21 @@ namespace Mixvel.Routing.RouteSearcher.Infrastructure.Providers.ProviderOne
             }
             catch (Exception e)
             {
-                this.Logger.LogError(e.Message);
+                this._logger.LogError(e.Message);
                 throw;
             }
         }
 
-        public async Task<ProviderHealhCheck> IsHealthy(CancellationToken cancellationToken)
+        public async Task<ProviderHealthCheck> IsHealthy(CancellationToken cancellationToken)
         {
             try
             {
-                HttpResponseMessage response = await httpClient.GetAsync(PingUrl, cancellationToken);
+                HttpResponseMessage response = await httpClient.GetAsync(_urls.HealthCheckUrl, cancellationToken);
                 return this.HealthCheck(response);
             }
             catch (Exception e)
             {
-                this.Logger.LogError(e.Message);
+                this._logger.LogError(e.Message);
                 throw;
             }
         }

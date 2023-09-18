@@ -4,11 +4,6 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 
-/*
- * This middleware will catch unhandled errors and return the exception as a JSON result object.
- * You need to add your own logging like we are using the ULL logging.
- */
-
 namespace Mixvel.Routing.RouteSearcher.Api.Extensions.Middleware
 {
     public class ExceptionMiddleware
@@ -35,6 +30,7 @@ namespace Mixvel.Routing.RouteSearcher.Api.Extensions.Middleware
 
         private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
+            //TODO: add custom Exceptions and map their to status codes
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 

@@ -1,32 +1,26 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Mixvel.Routing.RouteSearcher.Api.Common;
+using Mixvel.Routing.RouteSearcher.Application.Business.Routes.Dto;
+using Mixvel.Routing.RouteSearcher.Application.Business.Routes.Queries.SearchRoutes;
+
+namespace Mixvel.Routing.RouteSearcher.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 public class RouteController : ControllerBase
 {
-    private readonly ProvidersConfiguration providersConfiguration;
+    private readonly IMediator mediator;
 
-    public RouteController(IOptions<ProvidersConfiguration> providersConfiguration)
+    public RouteController(IMediator mediator)
     {
-        var config = providersConfiguration.Value;
+        this.mediator = mediator;
     }
 
-    [HttpGet("{id}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> Delete([FromRoute] Guid id)
+    [HttpPost("search")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(SearchRoutesResultDto))]
+    public async Task<IActionResult> Search([FromBody] SearchRoutesQuery request, CancellationToken cancellationToken)
     {
-        try
-        {
-            return StatusCode(StatusCodes.Status204NoContent);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError, new {exception_message = ex.Message});
-        }
+        var result = await mediator.Send(request, cancellationToken);
+        return Ok(result);
     }
 }
